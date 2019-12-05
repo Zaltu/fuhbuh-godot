@@ -20,7 +20,7 @@
 [ext_resource path="res://scenes/mainmenu/assets/title.png" type="Texture" id=18]
 [ext_resource path="res://scenes/mainmenu/assets/objeus_logo.png" type="Texture" id=19]
 
-[node name="Control" type="Control"]
+[node name="Menu" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 

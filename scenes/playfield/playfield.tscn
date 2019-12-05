@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://assets/field.png" type="Texture" id=1]
+
+[node name="Playfield" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="BGCol" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.0196078, 0.67451, 0.262745, 1 )
+
+[node name="Field" type="TextureRect" parent="."]
+anchor_top = 0.05
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 1
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.02
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -330.0
+margin_top = -6.0
+margin_right = -1788.0
+margin_bottom = -1066.0
+rect_scale = Vector2( 5, 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "1st and 10 on the 20"
