@@ -5,4 +5,4 @@ func _ready():
 	self.connect("pressed", self, "_teampick")
 
 func _teampick():
-	get_tree().change_scene("scenes/teampick/teampick.tscn")
+	get_tree().change_scene("scenes/game/game.tscn")
