@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://assets/field.png" type="Texture" id=1]
 [ext_resource path="res://assets/football.png" type="Texture" id=2]
+[ext_resource path="res://scenes/playfield/football.gd" type="Script" id=3]
 
 [node name="Playfield" type="Control"]
 anchor_right = 1.0
@@ -17,9 +18,10 @@ stretch_mode = 1
 anchor_top = 0.46
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 355.0
-margin_right = -1025.0
-margin_bottom = -476.251
+margin_left = 8.0
+margin_top = 0.200012
+margin_right = 330.0
+margin_bottom = -474.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_min_size = Vector2( 190, 109 )
@@ -27,3 +29,4 @@ rect_scale = Vector2( 0.8, 0.8 )
 texture = ExtResource( 2 )
 expand = true
 stretch_mode = 5
+script = ExtResource( 3 )
