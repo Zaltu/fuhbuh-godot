@@ -3,6 +3,7 @@ extends TextureButton
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Connect the current button to the exit game functionality.
+# warning-ignore:return_value_discarded
 	self.connect("pressed", self, "_exit_game")
 
 

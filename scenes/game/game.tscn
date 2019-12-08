@@ -1,19 +1,22 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://scenes/playfield/playfield.tscn" type="PackedScene" id=1]
-[ext_resource path="res://scenes/utils/score.tscn" type="PackedScene" id=2]
-[ext_resource path="res://scenes/offense/offense.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/game/scripts/game.gd" type="Script" id=1]
+[ext_resource path="res://scenes/playfield/playfield.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/utils/score.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/offense/offense.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/game/scripts/Label.gd" type="Script" id=5]
 
 [node name="Game" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 1 )
 
 [node name="FullBackgroundGreen" type="ColorRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0.0196078, 0.67451, 0.262745, 1 )
 
-[node name="Playfield" parent="." instance=ExtResource( 1 )]
+[node name="Playfield" parent="." instance=ExtResource( 2 )]
 anchor_top = 0.18
 margin_left = 400.0
 margin_right = 400.0
@@ -21,14 +24,14 @@ margin_bottom = 128.0
 rect_min_size = Vector2( 1920, 1080 )
 rect_scale = Vector2( 0.79, 0.8 )
 
-[node name="Score" parent="." instance=ExtResource( 2 )]
+[node name="Score" parent="." instance=ExtResource( 3 )]
 
-[node name="Offense" parent="." instance=ExtResource( 3 )]
+[node name="Offense" parent="." instance=ExtResource( 4 )]
 margin_left = 404.0
 margin_right = 1916.0
 margin_bottom = 100.0
 
-[node name="Position" type="Label" parent="."]
+[node name="Label" type="Label" parent="."]
 anchor_left = 0.43
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -38,3 +41,4 @@ margin_bottom = -935.466
 rect_scale = Vector2( 5, 5 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "1st and 10 on the 20"
+script = ExtResource( 5 )
