@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scenes/game/scripts/game.gd" type="Script" id=1]
 [ext_resource path="res://scenes/playfield/playfield.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/utils/score.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/offense/offense.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/game/scripts/Label.gd" type="Script" id=5]
+[ext_resource path="res://scenes/actionbutton/actionbutton.tscn" type="PackedScene" id=6]
 
 [node name="Game" type="Control"]
 anchor_right = 1.0
@@ -27,18 +28,27 @@ rect_scale = Vector2( 0.79, 0.8 )
 [node name="Score" parent="." instance=ExtResource( 3 )]
 
 [node name="Offense" parent="." instance=ExtResource( 4 )]
+visible = false
 margin_left = 404.0
 margin_right = 1916.0
 margin_bottom = 100.0
 
 [node name="Label" type="Label" parent="."]
+visible = false
 anchor_left = 0.43
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 130.534
-margin_right = -961.767
+margin_right = -962.4
 margin_bottom = -935.466
 rect_scale = Vector2( 5, 5 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "1st and 10 on the 20"
+align = 1
+valign = 1
 script = ExtResource( 5 )
+
+[node name="ActionButton" parent="." instance=ExtResource( 6 )]
+margin_left = 828.242
+margin_top = 19.0
+margin_right = -431.758
+margin_bottom = -869.0

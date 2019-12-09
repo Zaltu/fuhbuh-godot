@@ -8,7 +8,7 @@ var clock = ['1st', 720]
 # warning-ignore:unused_class_variable
 var simplePriorityLow = ['+', '-']
 var score = [0, 0] # (Me, Them)
-var localstance = "Offense"
+var localstance = "Defense"
 var yard = 40
 var firstdown = 50
 var down = 1
@@ -57,6 +57,10 @@ onready var PLAYMAP = {
 onready var printer = get_node("Label")  # import from Label
 onready var ball = get_node("Playfield/Field/football")
 
+onready var action = get_node("ActionButton")
+onready var actionbutton = get_node("ActionButton/ButtonTexture")
+onready var actiontext = get_node("ActionButton/Text")
+
 static func slicejoin(my_list, from, to, delimiter=""):
 	var newl = []
 	for i in range(from, to):
@@ -72,9 +76,23 @@ static func randint(limit):
 	return randi()%limit + 1
 
 
+func setActionButton(text, meth):
+	self.printer.set_visible(false)
+	self.action.set_visible(true)
+	self.actiontext.set_text(text)
+	self.actionbutton.connect("pressed", self, "_activate_action", [meth])
+
+func _activate_action(meth):
+	self.action.set_visible(false)
+	self.printer.set_visible(true)
+	# Meth is passed as a array as required by "connect",
+	# but is only given to us as a single value here for some reason
+	call(meth)
+
+
 func weightedRoll(stance, perc):
 	for sheetRoll in self.numProbTable[stance]:
-		if numProbTable[stance][numProbTable[stance].find(sheetRoll)+1] > perc:
+		if self.numProbTable[stance][numProbTable[stance].find(sheetRoll)] >= perc:
 			#print(sheetRoll, numProbTable[stance].index(sheetRoll))
 			return numProbTable[stance].find(sheetRoll)
 
@@ -98,6 +116,13 @@ func toggleStance():
 	self.switchYardSide()
 	self.down = 1
 	self.firstdown = self.yard+10
+	# View
+	if self.localstance == "Offense":
+		#get_node("Defense").set_visible(false)
+		get_node("Offense").set_visible(true)
+	elif self.localstance == "Defense":
+		get_node("Offense").set_visible(false)
+		#get_node("Defense").set_visible(true)
 
 
 func turnOver():
@@ -134,11 +159,11 @@ func gameOver():
 
 
 func handleFluff():
+	self.ball.set_new_position(self.getAbsoluteYardage())
 	if self.firstdown >= 100:
 		self.printer.setText("%s and goal on the %s" % [self.QNAMES[self.down-1], self.yard])
 	else:
 		self.printer.setText("%s and %s on the %s" % [self.QNAMES[self.down-1], self.firstdown-self.yard, self.yard])
-	self.ball.set_new_position(self.getAbsoluteYardage())
 	#self.printer.setText("Game time: %s : %s" % self.clock) update clock values
 
 
@@ -189,12 +214,19 @@ func kickoff():
 	self.TD = false
 	self.yard = 40
 	self.customKey('Kickoff', 'Kickoff')
-	print("Kicked to %s" % self.yard)
+	yield(self.printer, "sleep_done")
+	self.ball.set_new_position(self.getAbsoluteYardage())
+	self.printer.setText("Kicked to the %s yard line!" % self.yard)
+	yield(self.printer, "sleep_done")
 	self.toggleStance()
 	self.customKey('Kickoff Return', 'Kickoff Return')
-	print("Returned to %s" % self.yard)
+	yield(self.printer, "sleep_done")
+	self.ball.set_new_position(self.getAbsoluteYardage())
+	self.printer.setText("Returned to the %s yard line!" % self.yard)
+	yield(self.printer, "sleep_done")
 	self.firstdown = self.yard + 10
 	self.down = 1
+	self.handleFluff()
 
 
 func punt():
@@ -297,7 +329,7 @@ func fumble(result):
 		fum = self.team[FUMBLE_CHANCE_FIELD]
 	else:
 		fum = self.enemy[FUMBLE_CHANCE_FIELD]
-	self.yard += str(result.split(" ")[1])
+	self.yard += int(result.split(" ")[1])
 	var roll = randint(100)
 	if roll <= fum:
 		self.printer.setText("Fumble recovered!")
@@ -309,9 +341,9 @@ func fumble(result):
 
 func penalty(result, gain):
 	if not gain:
-		self.yard -= result.split(" ")[1]
+		self.yard -= int(result.split(" ")[1])
 	else:
-		self.yard += result.split(" ")[1]
+		self.yard += int(result.split(" ")[1])
 	# No down change on penalties
 	self.down -= 1
 	# Penalties are always considered oob
@@ -320,6 +352,7 @@ func penalty(result, gain):
 
 func customKey(ctype, key):
 	self.printer.setText(ctype + "!")
+	yield(self.printer, "sleep_done")
 	var line = {}  # Must get overwritten
 	if self.localstance == 'Offense':
 		line = self.team[key]
@@ -354,7 +387,8 @@ func _ready():
 	
 	# Test
 	self.offplay = "End Run"
-	self.kickoff()
+	self.setActionButton("Kickoff!", "kickoff")
+	#self.kickoff()
 	self.handleFluff()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
