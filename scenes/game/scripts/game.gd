@@ -54,7 +54,7 @@ onready var PLAYMAP = {
 	'B': funcref(self, "_breakaway")
 }
 
-onready var printer = get_node("Label")  # import from Label
+onready var printer = get_node("Playfield/Label")  # import from Label
 onready var ball = get_node("Playfield/Field/football")
 
 onready var action = get_node("ActionButton")
@@ -389,7 +389,7 @@ func _ready():
 	self.offplay = "End Run"
 	self.setActionButton("Kickoff!", "kickoff")
 	#self.kickoff()
-	self.handleFluff()
+	self.ball.set_new_position(self.getAbsoluteYardage())
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
