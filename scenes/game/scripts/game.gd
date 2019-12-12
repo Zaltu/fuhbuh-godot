@@ -1,10 +1,18 @@
 extends Control
 
+signal done_displaying
 
 const STANCES = ['Offense', 'Defense', 'Kick']
 const QNAMES = ['1st', '2nd', '3rd', '4th', 'END']
+const TEMP_OFF_PLAYS = ["Line Plunge", "Off Tackle", "End Run", "Draw", "Screen", "Short", "Medium", "Long", "Sideline"]  # 9 TODO
+const TEMP_DEF_PLAYS = ["Standard", "Short Yardage", "Spread", "Pass Prevent Short", "Pass Prevent Long", "Blitz"]  # 6 TODO
 
+var DISPLAYQ = []
 var clock = ['1st', 720]
+var rolls = {
+	"Offense": null,
+	"Defense": null
+}
 # warning-ignore:unused_class_variable
 var simplePriorityLow = ['+', '-']
 var score = [0, 0] # (Me, Them)
@@ -60,6 +68,8 @@ onready var ball = get_node("Playfield/Field/football")
 onready var action = get_node("ActionButton")
 onready var actionbutton = get_node("ActionButton/ButtonTexture")
 onready var actiontext = get_node("ActionButton/Text")
+onready var offense_gui = get_node("Offense")
+#onready var defense_gui = get_node("Defense")
 
 static func slicejoin(my_list, from, to, delimiter=""):
 	var newl = []
@@ -76,8 +86,24 @@ static func randint(limit):
 	return randi()%limit + 1
 
 
+func addToDisplayQueue(text):
+	self.DISPLAYQ.append([text, self.getAbsoluteYardage()])
+
+
+func wait_for_display():
+	for textelement in self.DISPLAYQ:
+		self.ball.set_new_position(textelement[1])
+		self.printer.setText(textelement[0])
+		yield(self.printer, "sleep_done")
+	self.DISPLAYQ.clear()
+	emit_signal("done_displaying")
+
+
 func setActionButton(text, meth):
 	self.printer.set_visible(false)
+	self.offense_gui.set_visible(false)
+	self.offense_gui.disable(true)
+	#self.defense_gui.set_process_input(false)
 	self.action.set_visible(true)
 	self.actiontext.set_text(text)
 	self.actionbutton.connect("pressed", self, "_activate_action", [meth])
@@ -88,6 +114,20 @@ func _activate_action(meth):
 	# Meth is passed as a array as required by "connect",
 	# but is only given to us as a single value here for some reason
 	call(meth)
+	self.wait_for_display()
+	yield(self, "done_displaying")
+	self.turnEnd()
+
+
+func set_offplay(play):
+	self.offense_gui.disable(true)
+	self.offplay = play
+	self.defplay = TEMP_DEF_PLAYS[randint(6)-1]  # TODO
+	self.rolls["Defense"] = self.enemy["Defense"][self.defplay][self.offplay][self.weightedRoll("Defense", randint(100))]
+	self.fullTurn(play)
+	self.wait_for_display()
+	yield(self, "done_displaying")
+	self.turnEnd()
 
 
 func weightedRoll(stance, perc):
@@ -126,16 +166,16 @@ func toggleStance():
 
 
 func turnOver():
-	self.printer.setText("Switched sides!")  # Only for CMD mode
+	self.addToDisplayQueue("Switched sides!")
 	self.down = 1
 	self.toggleStance()
-	self.printer.setText("Offense is now on the %s yard line." % self.yard)  # Only for CMD mode
+	self.addToDisplayQueue("Offense is now on the %s yard line." % self.yard)
 
 
 func fclock(star):
 	self.clock[1] -= 30 if not star else 10
 	if self.clock[1] <= 0:
-		self.printer.setText("Changing quarters")  # Only for CMD mode
+		self.addToDisplayQueue("Changing quarters")
 		self.changeQuarters()
 	self.boob = false
 
@@ -146,35 +186,35 @@ func changeQuarters():
 		self.gameOver()
 	self.clock[1] = 720
 	if self.clock[0] == self.QNAMES[2]:
-		self.printer.setText("Halftime!")
+		self.addToDisplayQueue("Halftime!")
 		if self.startingstance == "Offense" && self.localstance == "Offense":
 			self.toggleStance()
 		self.kickoff()
 
 
 func gameOver():
-	self.printer.setText("Game over")  # Only for CMD mode
-	self.printer.setText("Final score: %s to %s" % [self.score[0], self.score[1]])  # Only for CMD mode
+	self.addToDisplayQueue("Game over")
+	self.addToDisplayQueue("Final score: %s to %s" % [self.score[0], self.score[1]])
 	self.end = true
 
 
 func handleFluff():
-	self.ball.set_new_position(self.getAbsoluteYardage())
 	if self.firstdown >= 100:
-		self.printer.setText("%s and goal on the %s" % [self.QNAMES[self.down-1], self.yard])
+		self.addToDisplayQueue("%s and goal on the %s" % [self.QNAMES[self.down-1], self.yard])
 	else:
-		self.printer.setText("%s and %s on the %s" % [self.QNAMES[self.down-1], self.firstdown-self.yard, self.yard])
+		self.addToDisplayQueue("%s and %s on the %s" % [self.QNAMES[self.down-1], self.firstdown-self.yard, self.yard])
+		#self.defense_gui.set_process_input(false)
 	#self.printer.setText("Game time: %s : %s" % self.clock) update clock values
 
 
 func handleFluffCall():
-	self.printer.setText("Offense callout: %s -> %s" % [self.offplay, self.rolls['Offense']])
-	self.printer.setText("Defense callout: %s -> %s" % [self.defplay, self.rolls['Defense']])
+	self.addToDisplayQueue("Offense callout: %s -> %s" % [self.offplay, self.rolls['Offense']])
+	self.addToDisplayQueue("Defense callout: %s -> %s" % [self.defplay, self.rolls['Defense']])
 
 	
 func handleTD():
 	if self.yard >= 100:
-		self.printer.setText("TOUCHDOWN!")  # Only for CMD mode
+		self.addToDisplayQueue("TOUCHDOWN!")
 		self.handleScore()
 		self.TD = true
 
@@ -190,7 +230,7 @@ func handleDowns():
 	if self.yard >= 100:  # TD
 		return
 	if self.yard >= self.firstdown:
-		self.printer.setText("First Down!")  # Only for CMD mode
+		self.addToDisplayQueue("First Down!")
 		self.down = 1
 		self.firstdown = self.yard + 10
 	else:
@@ -199,31 +239,37 @@ func handleDowns():
 		self.turnOver()
 
 
-func fullTurn():
-	self.handleFluff()  # Only for CMD mode
+func fullTurn(callout):
+	#self.handleFluff()  # Only for CMD mode
 	var isoffenseplay = self.offplay if self.localstance == "Defense" else null
-	self.roll(self.callout, isoffenseplay)
+	self.roll(callout, isoffenseplay)
 	self.handleFluffCall()  # Only for CMD mode
 	self.processPlay()
 	self.handleDowns()
 	self.handleTD()
 	self.fclock(self.boob)
+	self.handleFluff()
+
+
+func turnEnd():
+	if self.localstance == "Offense":
+		self.offense_gui.disable(false)
+	elif self.localstance == "Defense":
+		pass
+	if self.TD == true:
+		self.yard = 40
+		self.ball.set_new_position(self.getAbsoluteYardage())
+		self.setActionButton("Kickoff!", "kickoff")
 
 
 func kickoff():
 	self.TD = false
 	self.yard = 40
 	self.customKey('Kickoff', 'Kickoff')
-	yield(self.printer, "sleep_done")
-	self.ball.set_new_position(self.getAbsoluteYardage())
-	self.printer.setText("Kicked to the %s yard line!" % self.yard)
-	yield(self.printer, "sleep_done")
+	self.addToDisplayQueue("Kicked to the %s yard line!" % self.yard)
 	self.toggleStance()
 	self.customKey('Kickoff Return', 'Kickoff Return')
-	yield(self.printer, "sleep_done")
-	self.ball.set_new_position(self.getAbsoluteYardage())
-	self.printer.setText("Returned to the %s yard line!" % self.yard)
-	yield(self.printer, "sleep_done")
+	self.addToDisplayQueue("Returned to the %s yard line!" % self.yard)
 	self.firstdown = self.yard + 10
 	self.down = 1
 	self.handleFluff()
@@ -319,7 +365,7 @@ func incomplete(result):
 
 
 func interception(result):
-	self.yard += result.split(" ")[1]
+	self.yard += int(result.split(" ")[1])
 	self.toggleStance()
 
 
@@ -332,9 +378,9 @@ func fumble(result):
 	self.yard += int(result.split(" ")[1])
 	var roll = randint(100)
 	if roll <= fum:
-		self.printer.setText("Fumble recovered!")
+		self.addToDisplayQueue("Fumble recovered!")
 		return
-	self.printer.setText("Fumble lost!")
+	self.addToDisplayQueue("Fumble lost!")
 	self.toggleStance()
 	self.down = 1
 
@@ -351,8 +397,7 @@ func penalty(result, gain):
 
 
 func customKey(ctype, key):
-	self.printer.setText(ctype + "!")
-	yield(self.printer, "sleep_done")
+	self.addToDisplayQueue(ctype + "!")
 	var line = {}  # Must get overwritten
 	if self.localstance == 'Offense':
 		line = self.team[key]
@@ -384,11 +429,9 @@ func _ready():
 	self.numProbTable = JSON.parse(dicetext).result
 	self.team = JSON.parse(raiderstext).result
 	self.enemy = JSON.parse(chargerstext).result
-	
+
 	# Test
-	self.offplay = "End Run"
 	self.setActionButton("Kickoff!", "kickoff")
-	#self.kickoff()
 	self.ball.set_new_position(self.getAbsoluteYardage())
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
