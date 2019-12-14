@@ -2,13 +2,12 @@ extends Control
 
 signal done_displaying
 
-const STANCES = ['Offense', 'Defense', 'Kick']
 const QNAMES = ['1st', '2nd', '3rd', '4th', 'END']
 const TEMP_OFF_PLAYS = ["Line Plunge", "Off Tackle", "End Run", "Draw", "Screen", "Short", "Medium", "Long", "Sideline"]  # 9 TODO
 const TEMP_DEF_PLAYS = ["Standard", "Short Yardage", "Spread", "Pass Prevent Short", "Pass Prevent Long", "Blitz"]  # 6 TODO
 
 var DISPLAYQ = []
-var clock = ['1st', 720]
+var clock = ['1st', 900]
 var rolls = {
 	"Offense": null,
 	"Defense": null
@@ -69,7 +68,7 @@ onready var action = get_node("ActionButton")
 onready var actionbutton = get_node("ActionButton/ButtonTexture")
 onready var actiontext = get_node("ActionButton/Text")
 onready var offense_gui = get_node("Offense")
-#onready var defense_gui = get_node("Defense")
+onready var defense_gui = get_node("Defense")
 
 static func slicejoin(my_list, from, to, delimiter=""):
 	var newl = []
@@ -91,11 +90,25 @@ func addToDisplayQueue(text):
 
 
 func wait_for_display():
+	self.fclock(self.boob)
 	for textelement in self.DISPLAYQ:
 		self.ball.set_new_position(textelement[1])
-		self.printer.setText(textelement[0])
+		self.printer.delayed_display(textelement[0])
 		yield(self.printer, "sleep_done")
 	self.DISPLAYQ.clear()
+	get_node("Score/homeScore").set_text(str(self.score[0]))
+	get_node("Score/awayScore").set_text(str(self.score[1]))
+	if self.end:
+		get_node("GameOverButton/homeScore").set_text(str(self.score[0]))
+		get_node("GameOverButton/awayScore").set_text(str(self.score[1]))
+		get_node("Score/Seconds").set_text("00")
+		get_node("Score/Minutes").set_text("00")
+		get_node("GameOverButton").set_visible(true)
+		emit_signal("done_displaying")
+		return
+	get_node("Score/Seconds").set_text("%02d" % (self.clock[1] % 60))
+	get_node("Score/Minutes").set_text(str(int(self.clock[1]/60)))
+	get_node("Score/Qst").set_text(self.clock[0])
 	emit_signal("done_displaying")
 
 
@@ -103,6 +116,8 @@ func setActionButton(text, meth):
 	self.printer.set_visible(false)
 	self.offense_gui.set_visible(false)
 	self.offense_gui.disable(true)
+	self.defense_gui.set_visible(false)
+	self.defense_gui.disable(true)
 	#self.defense_gui.set_process_input(false)
 	self.action.set_visible(true)
 	self.actiontext.set_text(text)
@@ -124,6 +139,17 @@ func set_offplay(play):
 	self.offplay = play
 	self.defplay = TEMP_DEF_PLAYS[randint(6)-1]  # TODO
 	self.rolls["Defense"] = self.enemy["Defense"][self.defplay][self.offplay][self.weightedRoll("Defense", randint(100))]
+	self.fullTurn(play)
+	self.wait_for_display()
+	yield(self, "done_displaying")
+	self.turnEnd()
+
+
+func set_defplay(play):
+	self.defense_gui.disable(true)
+	self.defplay = play
+	self.offplay = TEMP_OFF_PLAYS[randint(9)-1]  # TODO
+	self.rolls["Offense"] = self.enemy["Offense"][self.offplay][self.weightedRoll("Offense", randint(100))]
 	self.fullTurn(play)
 	self.wait_for_display()
 	yield(self, "done_displaying")
@@ -158,11 +184,11 @@ func toggleStance():
 	self.firstdown = self.yard+10
 	# View
 	if self.localstance == "Offense":
-		#get_node("Defense").set_visible(false)
-		get_node("Offense").set_visible(true)
+		self.defense_gui.set_visible(false)
+		self.offense_gui.set_visible(true)
 	elif self.localstance == "Defense":
-		get_node("Offense").set_visible(false)
-		#get_node("Defense").set_visible(true)
+		self.offense_gui.set_visible(false)
+		self.defense_gui.set_visible(true)
 
 
 func turnOver():
@@ -174,8 +200,9 @@ func turnOver():
 
 func fclock(star):
 	self.clock[1] -= 30 if not star else 10
+
 	if self.clock[1] <= 0:
-		self.addToDisplayQueue("Changing quarters")
+		self.addToDisplayQueue("Changing quarters!")
 		self.changeQuarters()
 	self.boob = false
 
@@ -184,7 +211,7 @@ func changeQuarters():
 	self.clock[0] = self.QNAMES[self.QNAMES.find(self.clock[0])+1]
 	if self.clock[0] == 'END':
 		self.gameOver()
-	self.clock[1] = 720
+	self.clock[1] = 900
 	if self.clock[0] == self.QNAMES[2]:
 		self.addToDisplayQueue("Halftime!")
 		if self.startingstance == "Offense" && self.localstance == "Offense":
@@ -200,9 +227,9 @@ func gameOver():
 
 func handleFluff():
 	if self.firstdown >= 100:
-		self.addToDisplayQueue("%s and goal on the %s" % [self.QNAMES[self.down-1], self.yard])
+		self.printer.set_text("%s and goal on the %s" % [self.QNAMES[self.down-1], self.yard])
 	else:
-		self.addToDisplayQueue("%s and %s on the %s" % [self.QNAMES[self.down-1], self.firstdown-self.yard, self.yard])
+		self.printer.set_text("%s and %s on the %s" % [self.QNAMES[self.down-1], self.firstdown-self.yard, self.yard])
 		#self.defense_gui.set_process_input(false)
 	#self.printer.setText("Game time: %s : %s" % self.clock) update clock values
 
@@ -247,19 +274,22 @@ func fullTurn(callout):
 	self.processPlay()
 	self.handleDowns()
 	self.handleTD()
-	self.fclock(self.boob)
-	self.handleFluff()
 
 
 func turnEnd():
+	if self.end:
+		return
 	if self.localstance == "Offense":
 		self.offense_gui.disable(false)
 	elif self.localstance == "Defense":
-		pass
+		self.defense_gui.disable(false)
+	self.ball.set_new_position(self.getAbsoluteYardage())
 	if self.TD == true:
 		self.yard = 40
 		self.ball.set_new_position(self.getAbsoluteYardage())
 		self.setActionButton("Kickoff!", "kickoff")
+		return
+	self.handleFluff()
 
 
 func kickoff():
@@ -272,7 +302,6 @@ func kickoff():
 	self.addToDisplayQueue("Returned to the %s yard line!" % self.yard)
 	self.firstdown = self.yard + 10
 	self.down = 1
-	self.handleFluff()
 
 
 func punt():
@@ -367,6 +396,8 @@ func incomplete(result):
 func interception(result):
 	self.yard += int(result.split(" ")[1])
 	self.toggleStance()
+	self.down = 1
+	# TODO Interception return
 
 
 func fumble(result):
@@ -407,11 +438,10 @@ func customKey(ctype, key):
 	var newRoll = self.weightedRoll('Offense', randint(100))
 	#print(newRoll)
 	var newPlay = line[newRoll]
-	print(ctype + " roll: %s" % newPlay)
 	var newType = _rolltype(newPlay)
-	print("new roll type: %s" % newType)
 	var fplay = PLAYMAP[newType]
 	fplay.call_func(newPlay)
+	self.addToDisplayQueue(ctype + " roll: %s" % newPlay)
 
 
 # Called when the node enters the scene tree for the first time.

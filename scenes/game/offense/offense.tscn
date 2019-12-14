@@ -1,0 +1,132 @@
+[gd_scene load_steps=29 format=2]
+
+[ext_resource path="res://scenes/game/offense/scripts/offense.gd" type="Script" id=1]
+[ext_resource path="res://assets/callouts/offense/lineplunge.png" type="Texture" id=2]
+[ext_resource path="res://assets/callouts/offense/lineplunge_click.png" type="Texture" id=3]
+[ext_resource path="res://assets/callouts/offense/lineplunge_hover.png" type="Texture" id=4]
+[ext_resource path="res://assets/callouts/offense/offtackle.png" type="Texture" id=5]
+[ext_resource path="res://assets/callouts/offense/offtackle_click.png" type="Texture" id=6]
+[ext_resource path="res://assets/callouts/offense/offtackle_hover.png" type="Texture" id=7]
+[ext_resource path="res://assets/callouts/offense/endrun.png" type="Texture" id=8]
+[ext_resource path="res://assets/callouts/offense/endrun_click.png" type="Texture" id=9]
+[ext_resource path="res://assets/callouts/offense/endrun_hover.png" type="Texture" id=10]
+[ext_resource path="res://assets/callouts/offense/draw.png" type="Texture" id=11]
+[ext_resource path="res://assets/callouts/offense/draw_click.png" type="Texture" id=12]
+[ext_resource path="res://assets/callouts/offense/draw_hover.png" type="Texture" id=13]
+[ext_resource path="res://assets/callouts/offense/screen.png" type="Texture" id=14]
+[ext_resource path="res://assets/callouts/offense/screen_click.png" type="Texture" id=15]
+[ext_resource path="res://assets/callouts/offense/screen_hover.png" type="Texture" id=16]
+[ext_resource path="res://assets/callouts/offense/short.png" type="Texture" id=17]
+[ext_resource path="res://assets/callouts/offense/short_click.png" type="Texture" id=18]
+[ext_resource path="res://assets/callouts/offense/short_hover.png" type="Texture" id=19]
+[ext_resource path="res://assets/callouts/offense/medium.png" type="Texture" id=20]
+[ext_resource path="res://assets/callouts/offense/medium_click.png" type="Texture" id=21]
+[ext_resource path="res://assets/callouts/offense/medium_hover.png" type="Texture" id=22]
+[ext_resource path="res://assets/callouts/offense/long.png" type="Texture" id=23]
+[ext_resource path="res://assets/callouts/offense/long_click.png" type="Texture" id=24]
+[ext_resource path="res://assets/callouts/offense/long_hover.png" type="Texture" id=25]
+[ext_resource path="res://assets/callouts/offense/sideline.png" type="Texture" id=26]
+[ext_resource path="res://assets/callouts/offense/sideline_click.png" type="Texture" id=27]
+[ext_resource path="res://assets/callouts/offense/sideline_hover.png" type="Texture" id=28]
+
+[node name="Offense" type="HBoxContainer"]
+custom_constants/separation = 0
+script = ExtResource( 1 )
+
+[node name="LinePlunge" type="TextureButton" parent="."]
+margin_right = 168.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 168, 100 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 3 )
+texture_hover = ExtResource( 4 )
+expand = true
+stretch_mode = 5
+
+[node name="OffTackle" type="TextureButton" parent="."]
+margin_left = 168.0
+margin_right = 336.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 168, 100 )
+texture_normal = ExtResource( 5 )
+texture_pressed = ExtResource( 6 )
+texture_hover = ExtResource( 7 )
+expand = true
+stretch_mode = 5
+
+[node name="EndRun" type="TextureButton" parent="."]
+margin_left = 336.0
+margin_right = 504.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 168, 100 )
+texture_normal = ExtResource( 8 )
+texture_pressed = ExtResource( 9 )
+texture_hover = ExtResource( 10 )
+expand = true
+stretch_mode = 5
+
+[node name="Draw" type="TextureButton" parent="."]
+margin_left = 504.0
+margin_right = 672.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 168, 100 )
+texture_normal = ExtResource( 11 )
+texture_pressed = ExtResource( 12 )
+texture_hover = ExtResource( 13 )
+expand = true
+stretch_mode = 5
+
+[node name="Screen" type="TextureButton" parent="."]
+margin_left = 672.0
+margin_right = 840.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 168, 100 )
+texture_normal = ExtResource( 14 )
+texture_pressed = ExtResource( 15 )
+texture_hover = ExtResource( 16 )
+expand = true
+stretch_mode = 5
+
+[node name="Short" type="TextureButton" parent="."]
+margin_left = 840.0
+margin_right = 1008.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 168, 100 )
+texture_normal = ExtResource( 17 )
+texture_pressed = ExtResource( 18 )
+texture_hover = ExtResource( 19 )
+expand = true
+stretch_mode = 5
+
+[node name="Medium" type="TextureButton" parent="."]
+margin_left = 1008.0
+margin_right = 1176.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 168, 100 )
+texture_normal = ExtResource( 20 )
+texture_pressed = ExtResource( 21 )
+texture_hover = ExtResource( 22 )
+expand = true
+stretch_mode = 5
+
+[node name="Long" type="TextureButton" parent="."]
+margin_left = 1176.0
+margin_right = 1344.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 168, 100 )
+texture_normal = ExtResource( 23 )
+texture_pressed = ExtResource( 24 )
+texture_hover = ExtResource( 25 )
+expand = true
+stretch_mode = 5
+
+[node name="Sideline" type="TextureButton" parent="."]
+margin_left = 1344.0
+margin_right = 1512.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 168, 100 )
+texture_normal = ExtResource( 26 )
+texture_pressed = ExtResource( 27 )
+texture_hover = ExtResource( 28 )
+expand = true
+stretch_mode = 5

@@ -50,6 +50,7 @@ expand = true
 stretch_mode = 5
 
 [node name="buttons" type="VBoxContainer" parent="."]
+editor/display_folded = true
 margin_left = 1032.0
 margin_top = 418.0
 margin_right = 1384.0

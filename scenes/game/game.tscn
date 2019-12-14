@@ -1,11 +1,15 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://scenes/game/scripts/game.gd" type="Script" id=1]
-[ext_resource path="res://scenes/playfield/playfield.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/game/playfield/playfield.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/game/scripts/Label.gd" type="Script" id=3]
-[ext_resource path="res://scenes/utils/score.tscn" type="PackedScene" id=4]
-[ext_resource path="res://scenes/offense/offense.tscn" type="PackedScene" id=5]
-[ext_resource path="res://scenes/actionbutton/actionbutton.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/game/utils/score.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/game/offense/offense.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/game/actionbutton/actionbutton.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/game/defense/defense.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/game/defense/defense.gd" type="Script" id=8]
+[ext_resource path="res://scenes/game/utils/gameover.tscn" type="PackedScene" id=9]
+[ext_resource path="res://scenes/game/utils/gameover.gd" type="Script" id=10]
 
 [node name="Game" type="Control"]
 anchor_right = 1.0
@@ -53,3 +57,23 @@ margin_left = 828.242
 margin_top = 19.0
 margin_right = -431.758
 margin_bottom = -869.0
+
+[node name="Defense" parent="." instance=ExtResource( 7 )]
+visible = false
+margin_left = 400.0
+margin_right = 1920.0
+alignment = 1
+script = ExtResource( 8 )
+
+[node name="GameOverButton" parent="." instance=ExtResource( 9 )]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -288.0
+margin_top = -162.0
+margin_right = 0.0
+margin_bottom = 0.0
+rect_scale = Vector2( 0.3, 0.3 )
+script = ExtResource( 10 )
