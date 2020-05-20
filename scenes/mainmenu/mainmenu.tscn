@@ -23,6 +23,9 @@
 [node name="Menu" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="sky" type="TextureRect" parent="."]
 anchor_right = 1.0
@@ -50,7 +53,6 @@ expand = true
 stretch_mode = 5
 
 [node name="buttons" type="VBoxContainer" parent="."]
-editor/display_folded = true
 margin_left = 1032.0
 margin_top = 418.0
 margin_right = 1384.0

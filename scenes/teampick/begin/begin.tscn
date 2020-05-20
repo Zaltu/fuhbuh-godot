@@ -1,0 +1,113 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://assets/menuing/begin.png" type="Texture" id=1]
+[ext_resource path="res://assets/menuing/fire.png" type="Texture" id=2]
+[ext_resource path="res://assets/menuing/begin_pressed.png" type="Texture" id=3]
+[ext_resource path="res://assets/menuing/begin_hover.png" type="Texture" id=4]
+[ext_resource path="res://scenes/teampick/begin/Begin.gd" type="Script" id=5]
+
+[sub_resource type="Animation" id=1]
+resource_name = "Fire"
+length = 2.08333
+loop = true
+step = 0.0416667
+tracks/0/type = "value"
+tracks/0/path = NodePath("FireAnimPlayer/fire:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2.04167 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0, 49 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("FireAnimPlayer/fire2:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = false
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 2.04167 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0, 49 ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "FlashBegin"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("FadePlayer/Begin:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.392157 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[node name="Begin" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 2.27203
+margin_right = 2.27197
+grow_horizontal = 2
+grow_vertical = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FireAnimPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Fire"
+anims/Fire = SubResource( 1 )
+
+[node name="fire" type="Sprite" parent="FireAnimPlayer"]
+visible = false
+position = Vector2( 1300, 820 )
+rotation = 1.0821
+scale = Vector2( 0.75, 0.75 )
+texture = ExtResource( 2 )
+vframes = 6
+hframes = 9
+
+[node name="fire2" type="Sprite" parent="FireAnimPlayer"]
+visible = false
+position = Vector2( 620, 820 )
+rotation = -1.0821
+scale = Vector2( 0.75, 0.75 )
+texture = ExtResource( 2 )
+flip_h = true
+vframes = 6
+hframes = 9
+
+[node name="FadePlayer" type="AnimationPlayer" parent="."]
+autoplay = "FlashBegin"
+anims/FlashBegin = SubResource( 2 )
+
+[node name="Begin" type="TextureButton" parent="FadePlayer"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.85
+anchor_right = 0.5
+anchor_bottom = 0.85
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 426.5, 131 )
+keep_pressed_outside = true
+texture_normal = ExtResource( 1 )
+texture_pressed = ExtResource( 3 )
+texture_hover = ExtResource( 4 )
+expand = true
+stretch_mode = 5
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="mouse_entered" from="FadePlayer/Begin" to="FadePlayer/Begin" method="_on_Begin_mouse_entered"]
+[connection signal="mouse_exited" from="FadePlayer/Begin" to="FadePlayer/Begin" method="_on_Begin_mouse_exited"]

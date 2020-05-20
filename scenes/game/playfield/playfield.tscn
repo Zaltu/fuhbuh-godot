@@ -4,10 +4,12 @@
 [ext_resource path="res://assets/football.png" type="Texture" id=2]
 [ext_resource path="res://scenes/game/playfield/scripts/football.gd" type="Script" id=3]
 
-
 [node name="Playfield" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Field" type="TextureRect" parent="."]
 anchor_right = 1.0

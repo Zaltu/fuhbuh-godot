@@ -8,4 +8,4 @@ func _ready():
 func _teampick():
 	# Go straight to game for now. Teampicker is TODO
 # warning-ignore:return_value_discarded
-	get_tree().change_scene("scenes/game/game.tscn")
+	get_tree().change_scene("scenes/teampick/teampick.tscn")
