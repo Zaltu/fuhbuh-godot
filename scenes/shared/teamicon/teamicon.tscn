@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://scenes/teampick/teamicon/teamicon.gd" type="Script" id=1]
+[ext_resource path="res://scenes/shared/teamicon/teamicon.gd" type="Script" id=1]
 
 [node name="TeamIcon" type="TextureRect"]
 anchor_right = 0.25

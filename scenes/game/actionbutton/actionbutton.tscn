@@ -1,9 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/game/actionbutton/assets/actionbuttontext.png" type="Texture" id=1]
 [ext_resource path="res://scenes/game/actionbutton/assets/actionbuttontext_click.png" type="Texture" id=2]
 [ext_resource path="res://scenes/game/actionbutton/assets/actionbuttontext_hover.png" type="Texture" id=3]
-
+[ext_resource path="res://assets/fonts/calculator_quarter_thcc.tres" type="DynamicFont" id=4]
 
 [node name="ActionButton" type="Control"]
 anchor_right = 1.0
@@ -32,13 +32,15 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -135.0
-margin_top = -35.0
-margin_right = -81.0
-margin_bottom = -21.0
-rect_scale = Vector2( 5, 5 )
+margin_left = -106.0
+margin_top = -41.0
+rect_pivot_offset = Vector2( 105.5, 41 )
 size_flags_horizontal = 3
 size_flags_vertical = 6
+custom_fonts/font = ExtResource( 4 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 align = 1
 valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

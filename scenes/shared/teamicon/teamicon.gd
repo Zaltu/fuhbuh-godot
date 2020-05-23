@@ -7,7 +7,7 @@ extends TextureRect
 var teamname = ""
 
 func get_drag_data(_pos):
-	var tempicon = load("res://scenes/teampick/teamicon/teamicon.tscn").instance()
+	var tempicon = load("res://scenes/shared/teamicon/teamicon.tscn").instance()
 	tempicon.set_texture(get_texture())
 	tempicon._set_size(Vector2(0.01, 0.01))
 	set_drag_preview(tempicon)

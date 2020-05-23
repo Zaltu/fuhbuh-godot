@@ -12,7 +12,7 @@ func _ready():
 	var teams = JSON.parse(availableTeams.get_as_text()).result
 	availableTeams.close()
 	# For each team, generate a teamicon in the scrollbar.
-	var teamiconscene = load("res://scenes/teampick/teamicon/teamicon.tscn")
+	var teamiconscene = load("res://scenes/shared/teamicon/teamicon.tscn")
 	for team in teams:
 		self.teamicons[team] = teamiconscene.instance()
 		self.teamicons[team].init(team)

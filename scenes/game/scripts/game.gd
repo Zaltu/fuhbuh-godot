@@ -450,7 +450,11 @@ func _ready():
 	file.open("res://assets/data/dice.json", file.READ)
 	var dicetext = file.get_as_text()
 	file.close()
+
 	var homeaway = global.get_params()
+	get_node("Score/homeLogoSlot").set_child_texture(homeaway[0])
+	get_node("Score/awayLogoSlot").set_child_texture(homeaway[1])
+
 	file.open("res://assets/data/teams/" + homeaway[0] + ".json", file.READ)
 	var hometext = file.get_as_text()
 	file.close()
