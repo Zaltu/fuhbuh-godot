@@ -20,6 +20,7 @@ func show_start(toggle):
 func start():
 	var hometeam = get_node("TeamIconSlotHome").teamname
 	var awayteam = get_node("TeamIconSlotAway").teamname
+	global.set_params([hometeam, awayteam])
 # warning-ignore:return_value_discarded
 	get_tree().change_scene("scenes/game/game.tscn")
 

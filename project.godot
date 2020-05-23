@@ -21,6 +21,10 @@ boot_splash/image="res://scenes/mainmenu/assets/objeus_logo.png"
 boot_splash/fullsize=false
 config/icon="res://assets/football.png"
 
+[autoload]
+
+global="*res://autoload/global.gd"
+
 [display]
 
 window/size/width=1920

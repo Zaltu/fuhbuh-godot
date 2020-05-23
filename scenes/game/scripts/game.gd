@@ -450,17 +450,18 @@ func _ready():
 	file.open("res://assets/data/dice.json", file.READ)
 	var dicetext = file.get_as_text()
 	file.close()
-	file.open("res://assets/data/teams/raiders.json", file.READ)
-	var raiderstext = file.get_as_text()
+	var homeaway = global.get_params()
+	file.open("res://assets/data/teams/" + homeaway[0] + ".json", file.READ)
+	var hometext = file.get_as_text()
 	file.close()
-	file.open("res://assets/data/teams/chargers.json", file.READ)
-	var chargerstext = file.get_as_text()
+	file.open("res://assets/data/teams/" + homeaway[1] + ".json", file.READ)
+	var awaytext = file.get_as_text()
 	file.close()
 	self.numProbTable = JSON.parse(dicetext).result
-	self.team = JSON.parse(raiderstext).result
-	self.enemy = JSON.parse(chargerstext).result
+	self.team = JSON.parse(hometext).result
+	self.enemy = JSON.parse(awaytext).result
 
-	# Test
+	# if singleplayer
 	self.setActionButton("Kickoff!", "kickoff")
 	self.ball.set_new_position(self.getAbsoluteYardage())
 

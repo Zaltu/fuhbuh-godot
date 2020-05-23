@@ -33,6 +33,9 @@ anchor_bottom = 1.0
 margin_top = -475.0
 texture = ExtResource( 2 )
 stretch_mode = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="home" type="TextureRect" parent="."]
 anchor_right = 1.0

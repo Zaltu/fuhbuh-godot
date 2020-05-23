@@ -3,8 +3,16 @@
 [ext_resource path="res://scenes/teampick/teamicon/teamicon.gd" type="Script" id=1]
 
 [node name="TeamIcon" type="TextureRect"]
+anchor_right = 0.25
+anchor_bottom = 0.25
+margin_right = 32.0
+margin_bottom = 242.0
 grow_horizontal = 2
 grow_vertical = 2
+rect_min_size = Vector2( 512, 512 )
+size_flags_horizontal = 6
+expand = true
+stretch_mode = 6
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
