@@ -26,6 +26,9 @@ texture_pressed = ExtResource( 2 )
 texture_hover = ExtResource( 3 )
 expand = true
 stretch_mode = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Text" type="Label" parent="."]
 anchor_left = 0.5

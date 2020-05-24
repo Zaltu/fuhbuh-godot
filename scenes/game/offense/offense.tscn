@@ -1,6 +1,6 @@
-[gd_scene load_steps=29 format=2]
+[gd_scene load_steps=35 format=2]
 
-[ext_resource path="res://scenes/game/offense/scripts/offense.gd" type="Script" id=1]
+[ext_resource path="res://scenes/game/offense/scripts/offensebuttons.gd" type="Script" id=1]
 [ext_resource path="res://assets/callouts/offense/lineplunge.png" type="Texture" id=2]
 [ext_resource path="res://assets/callouts/offense/lineplunge_click.png" type="Texture" id=3]
 [ext_resource path="res://assets/callouts/offense/lineplunge_hover.png" type="Texture" id=4]
@@ -28,12 +28,28 @@
 [ext_resource path="res://assets/callouts/offense/sideline.png" type="Texture" id=26]
 [ext_resource path="res://assets/callouts/offense/sideline_click.png" type="Texture" id=27]
 [ext_resource path="res://assets/callouts/offense/sideline_hover.png" type="Texture" id=28]
+[ext_resource path="res://scenes/game/actionbutton/assets/actionbuttontext_click.png" type="Texture" id=29]
+[ext_resource path="res://scenes/game/actionbutton/assets/actionbuttontext.png" type="Texture" id=30]
+[ext_resource path="res://scenes/game/actionbutton/assets/actionbuttontext_hover.png" type="Texture" id=31]
+[ext_resource path="res://assets/fonts/calculator_quarter.tres" type="DynamicFont" id=32]
+[ext_resource path="res://scenes/game/offense/scripts/offense.gd" type="Script" id=33]
+[ext_resource path="res://scenes/game/offense/scripts/optionalactions.gd" type="Script" id=34]
 
-[node name="Offense" type="HBoxContainer"]
+[node name="Offense" type="VBoxContainer"]
+size_flags_horizontal = 12
+custom_constants/separation = 10
+script = ExtResource( 33 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OffenseButtons" type="HBoxContainer" parent="."]
+margin_right = 1512.0
+margin_bottom = 100.0
 custom_constants/separation = 0
 script = ExtResource( 1 )
 
-[node name="LinePlunge" type="TextureButton" parent="."]
+[node name="LinePlunge" type="TextureButton" parent="OffenseButtons"]
 margin_right = 168.0
 margin_bottom = 100.0
 rect_min_size = Vector2( 168, 100 )
@@ -43,7 +59,7 @@ texture_hover = ExtResource( 4 )
 expand = true
 stretch_mode = 5
 
-[node name="OffTackle" type="TextureButton" parent="."]
+[node name="OffTackle" type="TextureButton" parent="OffenseButtons"]
 margin_left = 168.0
 margin_right = 336.0
 margin_bottom = 100.0
@@ -54,7 +70,7 @@ texture_hover = ExtResource( 7 )
 expand = true
 stretch_mode = 5
 
-[node name="EndRun" type="TextureButton" parent="."]
+[node name="EndRun" type="TextureButton" parent="OffenseButtons"]
 margin_left = 336.0
 margin_right = 504.0
 margin_bottom = 100.0
@@ -65,7 +81,7 @@ texture_hover = ExtResource( 10 )
 expand = true
 stretch_mode = 5
 
-[node name="Draw" type="TextureButton" parent="."]
+[node name="Draw" type="TextureButton" parent="OffenseButtons"]
 margin_left = 504.0
 margin_right = 672.0
 margin_bottom = 100.0
@@ -76,7 +92,7 @@ texture_hover = ExtResource( 13 )
 expand = true
 stretch_mode = 5
 
-[node name="Screen" type="TextureButton" parent="."]
+[node name="Screen" type="TextureButton" parent="OffenseButtons"]
 margin_left = 672.0
 margin_right = 840.0
 margin_bottom = 100.0
@@ -87,7 +103,7 @@ texture_hover = ExtResource( 16 )
 expand = true
 stretch_mode = 5
 
-[node name="Short" type="TextureButton" parent="."]
+[node name="Short" type="TextureButton" parent="OffenseButtons"]
 margin_left = 840.0
 margin_right = 1008.0
 margin_bottom = 100.0
@@ -98,7 +114,7 @@ texture_hover = ExtResource( 19 )
 expand = true
 stretch_mode = 5
 
-[node name="Medium" type="TextureButton" parent="."]
+[node name="Medium" type="TextureButton" parent="OffenseButtons"]
 margin_left = 1008.0
 margin_right = 1176.0
 margin_bottom = 100.0
@@ -109,7 +125,7 @@ texture_hover = ExtResource( 22 )
 expand = true
 stretch_mode = 5
 
-[node name="Long" type="TextureButton" parent="."]
+[node name="Long" type="TextureButton" parent="OffenseButtons"]
 margin_left = 1176.0
 margin_right = 1344.0
 margin_bottom = 100.0
@@ -120,7 +136,7 @@ texture_hover = ExtResource( 25 )
 expand = true
 stretch_mode = 5
 
-[node name="Sideline" type="TextureButton" parent="."]
+[node name="Sideline" type="TextureButton" parent="OffenseButtons"]
 margin_left = 1344.0
 margin_right = 1512.0
 margin_bottom = 100.0
@@ -130,3 +146,57 @@ texture_pressed = ExtResource( 27 )
 texture_hover = ExtResource( 28 )
 expand = true
 stretch_mode = 5
+
+[node name="OptionalActions" type="HBoxContainer" parent="."]
+margin_top = 110.0
+margin_right = 1512.0
+margin_bottom = 180.0
+size_flags_horizontal = 9
+size_flags_vertical = 12
+custom_constants/separation = 10
+script = ExtResource( 34 )
+
+[node name="FieldGoalButton" type="TextureButton" parent="OptionalActions"]
+margin_right = 200.0
+margin_bottom = 70.0
+rect_min_size = Vector2( 200, 70 )
+texture_normal = ExtResource( 30 )
+texture_pressed = ExtResource( 29 )
+texture_hover = ExtResource( 31 )
+expand = true
+
+[node name="FieldGoalLabel" type="Label" parent="OptionalActions/FieldGoalButton"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_fonts/font = ExtResource( 32 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "Field Goal"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PuntButton" type="TextureButton" parent="OptionalActions"]
+margin_left = 210.0
+margin_right = 410.0
+margin_bottom = 70.0
+rect_min_size = Vector2( 200, 70 )
+texture_normal = ExtResource( 30 )
+texture_pressed = ExtResource( 29 )
+texture_hover = ExtResource( 31 )
+expand = true
+
+[node name="PuntLabel" type="Label" parent="OptionalActions/PuntButton"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_fonts/font = ExtResource( 32 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "Punt"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

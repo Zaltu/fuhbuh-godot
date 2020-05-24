@@ -39,11 +39,11 @@ func _penaltytrue(roll):
 	penalty(roll, true)
 func _penaltyfalse(roll):
 	penalty(roll, false)
-# warning-ignore:unused_argument
-func _QT(dummy):
+
+func _QT(_dummy):
 	customKey("QT", "QT")
-# warning-ignore:unused_argument
-func _breakaway(dummy):
+
+func _breakaway(_dummy):
 	customKey("Breakaway", "Breakaway")
 
 onready var PLAYMAP = {
@@ -57,8 +57,9 @@ onready var PLAYMAP = {
 	'QT': funcref(self, "_QT"),
 	'INT': funcref(self, "interception"),
 	'F': funcref(self, "fumble"),
-	'BK': funcref(self, "fumble"),
-	'B': funcref(self, "_breakaway")
+	'BK': funcref(self, "fumble"),  # TODO fumble toggles stance and so does punt
+	'B': funcref(self, "_breakaway"),
+	'X': funcref(self, "puntNoReturn")
 }
 
 onready var printer = get_node("Playfield/Label")  # import from Label
@@ -120,6 +121,8 @@ func setActionButton(text, meth):
 	self.defense_gui.disable(true)
 	#self.defense_gui.set_process_input(false)
 	self.action.set_visible(true)
+	if self.actionbutton.is_connected("pressed", self, "_activate_action"):
+		self.actionbutton.disconnect("pressed", self, "_activate_action")
 	self.actiontext.set_text(text)
 	self.actionbutton.connect("pressed", self, "_activate_action", [meth])
 
@@ -155,6 +158,22 @@ func set_defplay(play):
 	yield(self, "done_displaying")
 	self.turnEnd()
 
+func set_puntplay():
+	self.offense_gui.disable(true)
+	self.defense_gui.disable(true)
+	self.punt()
+	self.wait_for_display()
+	yield(self, "done_displaying")
+	self.turnEnd()
+
+func set_fgplay():
+	self.offense_gui.disable(true)
+	self.defense_gui.disable(true)
+	self.fieldgoal()
+	self.wait_for_display()
+	yield(self, "done_displaying")
+	self.turnEnd()
+
 
 func weightedRoll(stance, perc):
 	for sheetRoll in self.numProbTable[stance]:
@@ -167,11 +186,13 @@ func switchYardSide():
 	self.yard = 100 - self.yard
 
 
-func getAbsoluteYardage():
+func getAbsoluteYardage(customYard=self.yard, offset=true):
+	if not offset:  # Don't offset the position to account for tip-based render
+		customYard = customYard + 5
 	if self.localstance == "Offense":
-		return self.yard - 5
+		return customYard - 5
 	else:
-		return 105 - self.yard
+		return 105 - customYard
 
 
 func toggleStance():
@@ -230,15 +251,30 @@ func handleFluff():
 		self.printer.set_text("%s and goal on the %s" % [self.QNAMES[self.down-1], self.yard])
 	else:
 		self.printer.set_text("%s and %s on the %s" % [self.QNAMES[self.down-1], self.firstdown-self.yard, self.yard])
-		#self.defense_gui.set_process_input(false)
-	#self.printer.setText("Game time: %s : %s" % self.clock) update clock values
 
 
 func handleFluffCall():
 	self.addToDisplayQueue("Offense callout: %s -> %s" % [self.offplay, self.rolls['Offense']])
 	self.addToDisplayQueue("Defense callout: %s -> %s" % [self.defplay, self.rolls['Defense']])
 
-	
+
+func handleSafety():
+	if self.yard <= 0:
+		if self.localstance == "Offense":
+			self.score[1] += 2
+		else:
+			self.score[0] += 2
+		# Update score now 'cause it looks better'
+		get_node("Score/homeScore").set_text(str(self.score[0]))
+		get_node("Score/awayScore").set_text(str(self.score[1]))
+		self.addToDisplayQueue("Safety!")
+		self.yard = 20
+		self.kickoff(self.yard)
+		return true
+	return false
+
+
+
 func handleTD():
 	if self.yard >= 100:
 		self.addToDisplayQueue("TOUCHDOWN!")
@@ -272,8 +308,9 @@ func fullTurn(callout):
 	self.roll(callout, isoffenseplay)
 	self.handleFluffCall()  # Only for CMD mode
 	self.processPlay()
-	self.handleDowns()
-	self.handleTD()
+	if not self.handleSafety():
+		self.handleDowns()
+		self.handleTD()
 
 
 func turnEnd():
@@ -290,17 +327,30 @@ func turnEnd():
 		self.ball.set_new_position(self.getAbsoluteYardage())
 		self.setActionButton("Kickoff!", "kickoff")
 		return
-	get_node("Playfield/YardMarker").set_visible(true)
-	get_node("Playfield/YardMarker").set_new_position(self.firstdown)
+	
+	var fdYardMarker = get_node("Playfield/YardMarker")
+	if self.firstdown >= 100:
+		fdYardMarker.set_visible(false)
+	else:
+		fdYardMarker.set_visible(true)
+	fdYardMarker.set_new_position(
+		self.getAbsoluteYardage(self.firstdown, false),
+		self.firstdown
+	)
+
 	self.handleFluff()
 
 
-func kickoff():
+func kickoff(fromYard=40):
 	self.TD = false
-	self.yard = 40
+	self.yard = fromYard
 	self.customKey('Kickoff', 'Kickoff')
 	self.addToDisplayQueue("Kicked to the %s yard line!" % self.yard)
 	self.toggleStance()
+	if self.yard > 99 or self.yard < 1:
+		# automatic touchback
+		self.processTouchback()
+		return
 	self.customKey('Kickoff Return', 'Kickoff Return')
 	self.addToDisplayQueue("Returned to the %s yard line!" % self.yard)
 	self.firstdown = self.yard + 10
@@ -310,16 +360,29 @@ func kickoff():
 func punt():
 	self.customKey('Punt', 'Punt')
 	self.toggleStance()
-	self.customKey('Punt Return', 'Punt Return')
+	if self.yard > 99 or self.yard < 1:
+		# automatic touchback
+		self.processTouchback()
+		return
+	if not self.boob:
+		self.customKey('Punt Return', 'Punt Return')
 	self.firstdown = self.yard + 10
 	self.down = 1
-	self.handleFluff()
+
+
+func fieldgoal():
+	pass
 
 
 
 
-
-
+func processTouchback():
+	# automatic touchback
+	self.yard = self.yard + 10  # Don't shuffle the ball position around it looks weird.
+	self.addToDisplayQueue("Touchback!")
+	self.yard = 20
+	self.firstdown = self.yard + 10
+	self.down = 1
 
 func roll(callout, offensePlay=null): # eg roll('Line Plunge')
 	var stats = self.team[self.localstance]
@@ -345,7 +408,7 @@ func processPlay():
 func determinePriority():
 	var defType = _rolltype(self.rolls['Defense'])
 	var attType = _rolltype(self.rolls['Offense'])
-	if not (defType in self.simplePriorityLow):
+	if not (defType in self.simplePriorityLow):  # TODO incomplete screws this up
 		return 'Defense'
 	elif not (attType in self.simplePriorityLow):
 		return 'Offense'
@@ -404,6 +467,7 @@ func interception(result):
 
 
 func fumble(result):
+	self.addToDisplayQueue("Fumble!")
 	var fum = 0  # Must get overwritten
 	if self.localstance == "Offense":
 		fum = self.team[FUMBLE_CHANCE_FIELD]
@@ -430,6 +494,12 @@ func penalty(result, gain):
 	self.boob = true
 
 
+func puntNoReturn(result):
+	self.boob = true
+	self.addToDisplayQueue("No Return!")
+	self.softs(result)
+
+
 func customKey(ctype, key):
 	self.addToDisplayQueue(ctype + "!")
 	var line = {}  # Must get overwritten
@@ -437,14 +507,16 @@ func customKey(ctype, key):
 		line = self.team[key]
 	else:
 		line = self.enemy[key]
-	#print(line)
 	var newRoll = self.weightedRoll('Offense', randint(100))
-	#print(newRoll)
 	var newPlay = line[newRoll]
 	var newType = _rolltype(newPlay)
 	var fplay = PLAYMAP[newType]
+	if newType == "F":
+		self.addToDisplayQueue(ctype + " roll: %s" % newPlay)
 	fplay.call_func(newPlay)
-	self.addToDisplayQueue(ctype + " roll: %s" % newPlay)
+	if not newType == "F":
+		self.addToDisplayQueue(ctype + " roll: %s" % newPlay)
+
 
 
 # Called when the node enters the scene tree for the first time.
@@ -471,7 +543,3 @@ func _ready():
 	# if singleplayer
 	self.setActionButton("Kickoff!", "kickoff")
 	self.ball.set_new_position(self.getAbsoluteYardage())
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
