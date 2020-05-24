@@ -169,9 +169,9 @@ func switchYardSide():
 
 func getAbsoluteYardage():
 	if self.localstance == "Offense":
-		return self.yard
+		return self.yard - 5
 	else:
-		return 100 - self.yard
+		return 105 - self.yard
 
 
 func toggleStance():
@@ -285,10 +285,13 @@ func turnEnd():
 		self.defense_gui.disable(false)
 	self.ball.set_new_position(self.getAbsoluteYardage())
 	if self.TD == true:
+		get_node("Playfield/YardMarker").set_visible(false)
 		self.yard = 40
 		self.ball.set_new_position(self.getAbsoluteYardage())
 		self.setActionButton("Kickoff!", "kickoff")
 		return
+	get_node("Playfield/YardMarker").set_visible(true)
+	get_node("Playfield/YardMarker").set_new_position(self.firstdown)
 	self.handleFluff()
 
 
