@@ -3,7 +3,7 @@ extends TextureButton
 
 func _pressed():
 	print("PLAY (foot) BALL!")
-	get_node("/root/TeamPick").start()
+	get_node("../../../").start()
 
 
 func _on_Begin_mouse_entered():

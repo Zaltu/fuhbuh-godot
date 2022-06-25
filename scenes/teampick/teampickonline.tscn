@@ -1,0 +1,81 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://assets/field.png" type="Texture" id=1]
+[ext_resource path="res://scenes/teampick/assets/teampick_top.png" type="Texture" id=2]
+[ext_resource path="res://scenes/teampick/teampickonline.gd" type="Script" id=3]
+[ext_resource path="res://assets/fonts/calculator_quarter_dummy_thcc.tres" type="DynamicFont" id=4]
+[ext_resource path="res://scenes/teampick/teambrowser/teambrowser.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/shared/teamicon/teamiconslot.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/teampick/begin/begin.tscn" type="PackedScene" id=9]
+
+[node name="TeamPickOnline" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="field" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.607843 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 1.0
+margin_right = 1.0
+texture = ExtResource( 1 )
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="teampick_top" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -475.0
+texture = ExtResource( 2 )
+stretch_mode = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TeamScroller" parent="." instance=ExtResource( 6 )]
+anchor_left = 0.01
+anchor_top = 0.25
+anchor_right = 0.99
+anchor_bottom = 0.99
+
+[node name="TeamIconSlotHome" parent="." instance=ExtResource( 7 )]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -118.5
+margin_top = 8.0
+margin_right = 118.5
+margin_bottom = 246.0
+
+[node name="Begin" parent="." instance=ExtResource( 9 )]
+margin_left = 0.0
+margin_right = -1920.0
+margin_bottom = -1080.0
+
+[node name="WAITING" type="ColorRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="WAITING"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -613.0
+margin_top = -81.0
+margin_right = 613.0
+margin_bottom = 81.0
+custom_fonts/font = ExtResource( 4 )
+text = "WAITING FOR OPPONENT"
+align = 1
+valign = 1

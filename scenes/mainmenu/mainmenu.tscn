@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://scenes/mainmenu/assets/sky.png" type="Texture" id=1]
 [ext_resource path="res://scenes/mainmenu/assets/maingrass.png" type="Texture" id=2]
@@ -19,6 +19,7 @@
 [ext_resource path="res://scenes/mainmenu/scripts/exit_game.gd" type="Script" id=17]
 [ext_resource path="res://scenes/mainmenu/assets/title.png" type="Texture" id=18]
 [ext_resource path="res://scenes/mainmenu/assets/objeus_logo.png" type="Texture" id=19]
+[ext_resource path="res://scenes/mainmenu/online_versus.gd" type="Script" id=20]
 
 [node name="Menu" type="Control"]
 anchor_right = 1.0
@@ -92,6 +93,7 @@ texture_pressed = ExtResource( 12 )
 texture_hover = ExtResource( 13 )
 expand = true
 stretch_mode = 4
+script = ExtResource( 20 )
 
 [node name="quit" type="TextureButton" parent="."]
 anchor_right = 1.0
@@ -132,3 +134,4 @@ margin_top = 1003.03
 margin_right = 1905.0
 margin_bottom = 1057.03
 texture = ExtResource( 19 )
+[connection signal="pressed" from="buttons/online_versus" to="buttons/online_versus" method="_on_online_versus_pressed"]
