@@ -8,6 +8,7 @@ func _ready():
 func _on_online_versus_pressed():
 	# Connect to server
 	global.connect_to_server()
+	emit_signal("connection_confirmed")
 
 func _on_connection_confirmed():
 	print("Changing scenes")
